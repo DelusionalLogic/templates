@@ -1,0 +1,84 @@
+\documentclass[preview]{standalone}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\begin{document}
+Lets say we have a function $\mathcal{M}_{out}(s)
+: \mathcal{P}(I^{out}_s)$ which returns the set of output interfaces
+matched by $s$, and $\mathcal{M}_{in}(s) : \mathcal{P}(I^{in}_s)$
+which does the same for input.
+
+Let $\to_R$ be the original network, we will construct a query network
+$\to_{R'}$.
+
+\paragraph{Multi step queries} need to be able to follow all routed in
+the original network in layer 0 (meaning it isn't trying to match the
+current switch)
+\begin{gather*}
+	\forall q \in Q \\
+	q \to_R q' \\
+	\iff \\
+	q_{>> s_1 \triangleright_2 \dotsb s_n} \to_{R'}
+		q'_{>> s_1 \triangleright_2 \dotsb s_n}
+\end{gather*}
+\paragraph{Single step queries} just need to be able to move into the
+match step, since they aren't allowed to traverse any link before the
+match is complete.
+\begin{gather*}
+	\forall s \in S \wedge \forall in \in I^{in}_s \wedge \forall \ell \in L \\
+	in \in \mathcal{M}_{in}(s_1) \\
+	\iff \\
+	{(s, in)}_{> s_1 \triangleright_2 \dotsb s_n}\ell \to_{R'}
+		{(s, in)}_{s_1 \triangleright_2 \dotsb s_n}\ell
+\end{gather*}
+\paragraph{Interface} If input interface here matches the one we are
+currently looking for the model gets the \emph{OPTION} of matching it
+now. Which moves it into layer 1 (currently trying to match). This also
+removes the path step quantifier from the query.
+\begin{gather*}
+	\forall s \in S \wedge \forall in \in I^{in}_s \wedge \forall \ell \in L \\
+	in \in \mathcal{M}_{in}(s_1) \\
+	\iff \\
+	{(s, in)}_{>> s_1 \triangleright_2 \dotsb s_n}\ell \to_{R'}
+		{(s, in)}_{s_1 \triangleright_2 \dotsb s_n}\ell
+\end{gather*}
+\paragraph{Layer 1} in layer 1 the model is allowed to follow the normal
+routing steps, including failovers and such.
+\begin{gather*}
+	\forall s \in S \wedge \forall in \in I^{in}_s \wedge \forall out \in I^{out}_s \wedge \forall \ell \in L \\
+	(s, in)\ell \to_R (s, out, 0)\ell'
+	\\
+	\iff
+	\\
+	{(s, in)}_{s_1 \triangleright_2 \dotsb s_n}\ell \to_{R'}
+		{(s, out, 0)}_{s_1 \triangleright_2 \dotsb s_n}\ell'
+\end{gather*}
+\begin{gather*}
+	\forall s \in S \wedge \forall out \in I^{out}_s \wedge \forall 1<i<k \wedge \forall \ell \in L \\
+	(s, out, i)\ell \to_R (s, out', i+1)\ell'
+	\\
+	\iff
+	\\
+	{(s, out, i)}_{s_1 \triangleright_2 \dotsb s_n}\ell \to_{R'}
+		{(s, out', i+1)}_{s_1 \triangleright_2 \dotsb s_n}\ell'
+\end{gather*}
+\paragraph{Matched} If the output interface is the one we are looking
+for the model has an \emph{OPTION} to move into layer 2 (match
+completed). Doing so also removes the switch from the query. At this
+layer the model is no longer allowed to failover, since it has already
+committed to matching.
+\begin{gather*}
+	out \in \mathcal{M}_{out}(s_1) \wedge (s, out, i)\ell \to_R (s', in)\ell' \\
+	\iff \\
+	{(s, out, i)}_{s_1 \triangleright_2 \dotsb s_n}\ell \to_{R'}
+		{(s', in)}_{\triangleright_2 \dotsb s_n}\ell
+	% Do we need this? We might be able to just jump directly to the
+	% link (next rule), that way we can eliminate the second variable
+\end{gather*}
+The input step enters at interstage 1, where the path specifier has
+already been removed.
+\begin{gather*}
+	build \to_{R'}
+		q_{s_1 \triangleright_2 \dotsb s_n}
+\end{gather*}
+\end{document}

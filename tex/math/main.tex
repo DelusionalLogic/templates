@@ -3,41 +3,53 @@
 \usepackage{amssymb}
 \usepackage{stmaryrd}
 \begin{document}
-$\mathcal{T}$ is the set of all valid traces for a given network
+$\mathcal{T}_N^k$ is the set of all valid traces for a network $N$ with
+$k$ link failures. Below $N = (S, I_s^{in}, I_s^{out}, L, E, \tau{}_s,
+\pi{}_s)$
+
 \begin{align*}
-	D(s) &: \bigcup_{\substack{out \in I^{out}_s \\in \in I^{in}_s}}D(in : s : out)
+	D_N^k(in : s : out) &= 
+		\bigl\{ (s, in, h_1, out, h_2, F) \in \mathcal{T}_N^k \bigr\}
 		\\
-	D(in : s :) &: \bigcup_{out \in I^{out}_s}D(in : s : out)
+	D_N^k(in : s :) &= \bigcup_{\mathclap{out \in I^{out}_s}}
+		D_N^k(in : s : out)
 		\\
-	D(: s : out) &: \bigcup_{in \in I^{in}_s}D(in : s : out)
+	D_N^k(: s : out) &= \bigcup_{\mathclap{in \in I^{in}_s}}
+		D_N^k(in : s : out)
 		\\
-		D(in_q : s_q : out_q) &: 
+	D_N^k(s) &= \bigcup_{%
+		\mathclap{\substack{out \in I^{out}_s \\in \in I^{in}_s}}}
+		D_N^k(in : s : out)
+		\\
+		\\
+	D_N^k(s_1 \triangleright_2 \dotsb s_{n-1} > s_n) &=
+		\left\{ xy \in \mathcal{T}_N^k \mid x \in D_N^k(s_n) \wedge
+		y \in D_N^k(s_1 \triangleright_2 \dotsb s_{n-1}) \right\}
+		\\
+	D_N^k(s_1 \triangleright_2 \dotsb s_{n-1} >> s_n) &=
+		\left\{ xzy \in \mathcal{T}_N^k \mid x \in D_N^k(s_n) \wedge
+		y \in D_N^k(s_1 \triangleright_2 \dotsb s_{n-1}) \wedge z \in
+	\mathcal{T}_N^k \right\}
+		\\
+		\\
+		D_N^k(h^1; p; h^2) &= 
 		\begin{aligned}[t]
-			\bigl\{ (s, in, h_1, out, h_2, F) &\mid{}
-			in_q = in \wedge{} s_q = s \wedge{} out_q = out \\
-			&\wedge{} (s, in, h_1, out, h_2, F) \in{} \mathcal{T} \bigr\}
-		\end{aligned}
-		\\
-		\\
-	P(e_s) &: D(e_s)
-		\\
-	P(e_p > e_s) &: \left\{ xy \mid x \in P(e_p) \wedge{} y \in{}
-		D(e_s) \wedge{} xy \in{} \mathcal{T} \right\}
-		\\
-	P(e_p >> e_s) &: \left\{ xzy \mid{} x \in{} P(e_p) \wedge{} y \in{}
-		D(e_s) \wedge{} z \in{} \mathcal{T} \wedge{} xzy \in{} \mathcal{T}
-		\right\}
-		\\
-		\\
-		Q(e_h^1 e_p e_h^2) &: 
-		\begin{aligned}[t]
-			\bigl\{ xyz &\mid{}
-			x = (s^1, in^x, h_1^x, out^x, h_2^x, F^x)\\
+			\bigl\{ xyz \in D_N^k(p) &\mid{}
+			x = (s^x, in^x, h_1^x, out^x, h_2^x, F^x)\\
 			&\wedge{}z = (s^z, in^z, h_1^z, out^z, h_2^z, F^z)\\
-			&\wedge{} h_1^x \in \left\llbracket e_h^1 \right\rrbracket\\
-			&\wedge{} h_2^z \in \left\llbracket e_h^2 \right\rrbracket\\
-			&\wedge{} xyz \in \mathcal{T}
+			&\wedge{} h_1^x \in \left\llbracket h^1 \right\rrbracket
+			\wedge{} h_2^z \in \left\llbracket h^2 \right\rrbracket
 			\bigr\}
 		\end{aligned}
+		\\
+		\\
+		D_N^k(h_1; p; h_{n+1}) &= 
+			\left\{ 
+			\begin{gathered}
+				(s_1, in_1, h_1, out_1, h_2, F_1)\\
+				\vdots\\
+				(s_n, in_n, h_n, out_n, h_{n+1}, F_n)
+			\end{gathered}
+			\in D_N^k(p) \right\}
 \end{align*}
 \end{document}
